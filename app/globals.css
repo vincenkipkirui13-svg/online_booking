@@ -5,3 +5,30 @@
 
 .payment-details{margin-top:16px;padding:18px;background:#f5f7ef;border:1px solid #dce6d4;border-radius:9px}.payment-details h4{font-family:Manrope,sans-serif;font-size:17px;margin:7px 0 10px;color:#183c2f}.payment-number{display:inline-block;padding:12px 16px;border-radius:7px;background:#fff;border:1px dashed #88a17f;color:#173e2e;font-family:Manrope,sans-serif;font-size:25px;font-weight:800;letter-spacing:1.5px}.payment-account{font-size:11px;color:#53675a;margin:9px 0}.payment-details>p:last-child,.payment-missing{font-size:11px;line-height:1.7;color:#68796d;margin:12px 0 0}.payment-missing{color:#8b4a27;background:#fff4e9;border-radius:6px;padding:10px}
 @media(max-width:600px){.payment-details{padding:14px}.payment-number{font-size:22px;max-width:100%;overflow-wrap:anywhere}}
+
+/* Prestige Shuttle visual refresh */
+:root{--green:#102c46;--green-dark:#081a2b;--lime:#f0b84b;--ink:#162b3b;--paper:#f6f7f9}
+.brand-mark{background:#102c46;color:#f0b84b;border-radius:10px}
+.hero{background:#081a2b}
+.hero-image{background-image:url('https://images.unsplash.com/photo-1570125909232-eb263c188f7e?auto=format&fit=crop&w=2000&q=90');background-position:center 52%;opacity:.78}
+.hero-shade{background:linear-gradient(90deg,#081a2b 0%,#081a2b 24%,rgba(8,26,43,.86) 43%,rgba(8,26,43,.1) 100%),linear-gradient(0deg,rgba(8,26,43,.45),transparent 60%)}
+.eyebrow span,.announcement-divider,.hero-perks b,.nav-cta span,.dark-link span,.trip-price button span{background:transparent;color:#f0b84b}
+.nav-cta,.search-button,.trip-price button,.dark-link{background:#102c46}
+.one-way,.search-footnote{color:#5a7185}
+.all-routes-section{padding:55px 0 65px;background:#eef2f6}
+.route-fare-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:24px}
+.fare-card{display:grid;grid-template-columns:38px minmax(0,1fr) auto;gap:12px;align-items:center;background:#fff;border:1px solid #e0e7ee;border-radius:12px;padding:15px;box-shadow:0 6px 22px #132f4808}
+.fare-card-icon{display:grid;place-items:center;width:36px;height:36px;border-radius:10px;background:#eaf0f6;color:#244e70;font-size:18px}
+.fare-card h3{font-size:13px;margin:0 0 5px;color:#172f43}
+.fare-card p{font-size:10px;line-height:1.5;color:#748291;margin:0}
+.fare-card strong{font-size:13px;color:#173b5a;white-space:nowrap}
+.fare-card button{grid-column:2/4;justify-self:start;border:0;border-radius:6px;background:#102c46;color:#fff;padding:8px 12px;font-size:10px;font-weight:700}
+.fare-card button span{color:#f0b84b;margin-left:8px}
+.service-banner{display:flex;align-items:center;justify-content:space-between;gap:24px;background:#102c46;color:white;border-radius:15px;padding:26px 30px;margin-top:26px}
+.service-banner h2{font-family:Manrope,sans-serif;font-size:24px;margin:8px 0}
+.service-banner p{color:#d2deea;font-size:12px;line-height:1.7;margin:0;max-width:560px}
+.service-banner a{flex-shrink:0;padding:13px 16px;border-radius:8px;background:#f0b84b;color:#102c46;font-size:11px;font-weight:800}
+.floating-contact{position:fixed;right:16px;bottom:18px;z-index:30;display:flex;flex-direction:column;gap:10px}
+.floating-contact a{display:flex;align-items:center;gap:9px;padding:11px 15px;border-radius:30px;color:white;box-shadow:0 8px 22px #071a2c30;font-size:11px;font-weight:800}
+.float-whatsapp{background:#159b5b}.float-call{background:#102c46}.floating-contact span{font-size:17px}
+@media(max-width:600px){.route-fare-grid{grid-template-columns:1fr}.fare-card{grid-template-columns:34px minmax(0,1fr) auto;gap:9px;padding:12px}.fare-card-icon{width:32px;height:32px}.fare-card h3{font-size:12px}.fare-card p{font-size:9px}.fare-card strong{font-size:11px}.fare-card button{grid-column:2/4}.service-banner{align-items:flex-start;flex-direction:column;padding:22px}.service-banner h2{font-size:22px}.service-banner a{font-size:10px}.floating-contact{right:10px;bottom:12px}.floating-contact a{padding:10px 13px}.floating-contact b{font-size:10px}.all-routes-section{padding:40px 0}.hero-image{background-position:58% center}}
