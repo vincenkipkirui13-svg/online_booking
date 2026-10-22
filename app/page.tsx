@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useMemo, useState } from "react";
+import { FormEvent, useEffect, useMemo, useState } from "react";
 
 const towns = ["Nairobi", "Nakuru", "Eldoret", "Kisumu", "Mombasa", "Nyeri", "Kakamega", "Kericho", "Kisii", "Kitale", "Meru", "Thika", "Mbale", "Bungoma", "Busia", "Malindi", "Naivasha", "Heaven's Gate"];
 const sampleTrips = [
@@ -28,6 +28,13 @@ export default function Home() {
   const [notice, setNotice] = useState("");
   const [paymentInfo, setPaymentInfo] = useState<{ type: string; number: string | null; accountName: string | null; configured: boolean } | null>(null);
   const [loadingPaymentInfo, setLoadingPaymentInfo] = useState(false);
+  const [fleetHeroPhoto, setFleetHeroPhoto] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetch("/api/site-photos", { cache: "no-store" }).then((response) => response.ok ? response.json() : null).then((data) => {
+      if (data?.photos?.[0]?.url) setFleetHeroPhoto(data.photos[0].url);
+    }).catch(() => undefined);
+  }, []);
 
   const results = useMemo(() => sampleTrips.filter((trip) => trip.from === from && trip.to === to), [from, to]);
   const today = new Date().toISOString().slice(0, 10);
@@ -71,7 +78,7 @@ export default function Home() {
       "",
       "Please confirm availability, departure time and total fare.",
       "I understand this is a booking request and is not confirmed until Prestige Shuttle replies."
-    ].join("\\n");
+    ].join("\n");
     setNotice("Opening WhatsApp with your booking details. Tap Send in WhatsApp to send your request.");
     window.location.href = "https://wa.me/254733672905?text=" + encodeURIComponent(message);
   }
@@ -86,7 +93,7 @@ export default function Home() {
       </header>
 
       <section className="hero">
-        <div className="hero-image" aria-hidden="true" />
+        <div className="hero-image" aria-hidden="true" style={fleetHeroPhoto ? { backgroundImage: `linear-gradient(90deg, rgba(8,26,43,.12), rgba(8,26,43,.12)), url("${fleetHeroPhoto}")` } : undefined} />
         <div className="hero-shade" aria-hidden="true" />
         <div className="hero-content wrap">
           <div className="eyebrow"><span /> YOUR JOURNEY STARTS WITH PRESTIGE</div>
