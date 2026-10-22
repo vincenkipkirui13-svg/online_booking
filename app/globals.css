@@ -74,3 +74,75 @@
     background-size: cover, contain !important;
   }
 }
+
+
+/* Final photo layout: real image elements use contain, never background cover. */
+.hero {
+  min-height: 470px !important;
+  overflow: hidden !important;
+  background: #081a2b !important;
+}
+.hero-image {
+  position: absolute !important;
+  inset: 0 0 0 43% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: none !important;
+  opacity: 1 !important;
+  overflow: hidden !important;
+}
+.hero-image .hero-photo {
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: contain !important;
+  object-position: center center !important;
+}
+.hero-shade {
+  background: linear-gradient(90deg, #081a2b 0%, #081a2b 28%, rgba(8,26,43,.9) 42%, rgba(8,26,43,.35) 62%, rgba(8,26,43,.08) 100%) !important;
+  pointer-events: none !important;
+}
+.route-photo {
+  height: 128px !important;
+  min-height: 0 !important;
+  padding: 10px !important;
+  background: #eef2f6 !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+.route-photo .route-photo-image {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: contain !important;
+  object-position: center center !important;
+  display: block !important;
+}
+.route-photo:after {
+  background: linear-gradient(0deg, rgba(8,26,43,.10), transparent 45%) !important;
+  pointer-events: none !important;
+}
+.route-photo > span {
+  z-index: 2 !important;
+}
+@media (max-width: 900px) {
+  .hero { min-height: 500px !important; }
+  .hero-image { inset: 0 0 0 40% !important; }
+}
+@media (max-width: 600px) {
+  .hero { min-height: 570px !important; }
+  .hero-image {
+    inset: 0 0 0 30% !important;
+    align-items: center !important;
+  }
+  .hero-image .hero-photo {
+    object-fit: contain !important;
+    object-position: center center !important;
+  }
+  .hero-shade {
+    background: linear-gradient(90deg, #081a2b 0%, rgba(8,26,43,.96) 30%, rgba(8,26,43,.72) 50%, rgba(8,26,43,.12) 100%) !important;
+  }
+  .route-photo { height: 116px !important; }
+}
