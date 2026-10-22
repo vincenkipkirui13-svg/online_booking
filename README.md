@@ -1,25 +1,34 @@
 # SafariLine — Kenya Bus Booking
 
-A mobile-first intercity bus booking website built with Next.js for a single transport operator. The intended production platform is Vercel with managed PostgreSQL.
+A mobile-first intercity bus booking website for a single transport operator, built with Next.js, PostgreSQL and Prisma. Vercel is the intended hosting platform.
 
 ## Current state
 
-The repository now contains the first UI and architecture scaffold:
-- Responsive passenger-facing landing page and trip-search preview.
-- Sample route cards and example schedules to demonstrate the experience.
-- Passenger details preview and M-Pesa/card payment selection UI.
+- Responsive passenger-facing booking homepage and sample route search.
 - Initial PostgreSQL/Prisma data model for routes, buses, trips, bookings and payments.
-- Environment variable template with payment secrets kept server-side.
+- Database-backed trip search and booking API scaffolding.
+- Manual M-Pesa payment configuration for Paybill or Till number.
+- Customers will pay in the M-Pesa app/SIM Toolkit, then submit the transaction code for verification.
 
-**Important:** This is a development preview, not a live booking or payment service. Displayed routes, fares, times and seat counts are sample data. No seat is reserved, no ticket is issued and no payment is collected yet. Connect the database, live trip inventory, seat locking, authentication and verified payment callbacks before taking real bookings.
+**Not ready for real bookings yet:** displayed routes, fares, departure times and seat counts are sample data. Database setup, real trip/seat inventory, secure admin tools, payment verification and ticket delivery must be completed before launch.
+
+## Payment flow
+
+1. Customer selects a trip and requests seats.
+2. Website displays the configured Paybill or Till number and payment instructions.
+3. Customer pays manually through M-Pesa and enters the M-Pesa transaction code.
+4. The booking stays **PENDING_PAYMENT** until the business verifies the payment against its M-Pesa statement/portal or a trusted Safaricom C2B confirmation integration.
+5. Only after verification should an authorized server-side action mark the payment successful and confirm the booking.
+
+Never confirm a ticket solely because a customer typed a transaction code. Do not ask for or collect the customer's M-Pesa PIN. Do not store card details; card payments are not part of the current plan.
+
+Safaricom's official C2B API can send notifications for successful payments to Paybill or Till numbers if the business is eligible and completes the integration: https://developer.safaricom.co.ke/apis/CustomerToBusiness
 
 ## Stack
 
-- Next.js App Router + React + TypeScript
-- PostgreSQL + Prisma
+- Next.js App Router, React and TypeScript
+- PostgreSQL and Prisma
 - Vercel hosting
-- Safaricom Daraja for M-Pesa STK Push
-- Card payments provider (Paystack is the initial intended option)
 
 ## Local setup
 
@@ -31,63 +40,37 @@ cp .env.example .env
 npm run dev
 ```
 
-Open http://localhost:3000.
-
-To configure PostgreSQL and generate the client:
+Set a real PostgreSQL `DATABASE_URL` before running migrations:
 
 ```bash
-# Set DATABASE_URL in .env first
 npx prisma generate
 npx prisma migrate dev --name init
 ```
 
-Do not run migrations until a valid PostgreSQL database is available.
+## Vercel deployment
 
-## Deploy to Vercel
-
-1. Import `vincenkipkirui13-svg/online_booking` from GitHub into Vercel.
-2. Select the Next.js framework preset and the `main` branch.
-3. Add environment variables in Vercel Project Settings → Environment Variables.
-4. Attach a managed PostgreSQL database and set `DATABASE_URL`.
-5. Deploy, then test the preview URL before attaching a custom domain.
-
-Vercel's Next.js support provides framework-aware deployments and API routes. Environment variables are configured per project/environment and require a redeployment to take effect.
-
-## Payment safety checklist
-
-### M-Pesa
-- Create a Daraja application and test in sandbox first.
-- Keep consumer key, consumer secret, passkey and callback secrets on the server only.
-- Initiate STK Push from a server route; do not mark a booking paid from the initial STK response.
-- Verify the signed/expected callback shape, result code, amount, shortcode and transaction reference.
-- Handle duplicate callbacks idempotently and reconcile missed callbacks before confirming tickets.
-- Use the production callback URL and approved live credentials only after business onboarding.
-
-Official portal: https://developer.safaricom.co.ke/apis/GettingStarted
-
-### Card payments
-- Use a provider-hosted/secure checkout flow and server-side transaction verification.
-- Never trust a client redirect alone as proof of payment.
-- Confirm a booking only after a verified provider webhook or server-side verification.
-- Never store card numbers or CVV in this application.
+1. Import `vincenkipkirui13-svg/online_booking` into Vercel.
+2. Select the Next.js framework preset and `main` branch.
+3. Attach managed PostgreSQL and configure `DATABASE_URL`.
+4. Configure `MPESA_PAYMENT_TYPE`, and either `MPESA_PAYBILL_NUMBER` or `MPESA_TILL_NUMBER`; set `MPESA_ACCOUNT_NAME` if useful.
+5. Deploy and test on a preview URL before attaching a custom domain.
 
 ## Before accepting real bookings
 
-- [ ] Confirm business/brand name, support contacts and ticket terms.
-- [ ] Configure actual routes, fares, vehicles, seat maps and departure schedules.
-- [ ] Implement database-backed trip search and atomic seat inventory/temporary holds.
-- [ ] Implement customer booking creation, reference generation and ticket delivery.
+- [ ] Configure the actual business name, customer support contacts and payment instructions.
+- [ ] Add actual routes, bus seat layouts, fares and departure schedules.
+- [ ] Connect the public search UI to database trip search.
+- [ ] Finish atomic seat reservation/expiry and retry-safe conflict handling.
 - [ ] Implement protected admin login and role checks.
-- [ ] Implement Daraja STK Push and verified callbacks.
-- [ ] Implement card checkout and server-side payment verification.
-- [ ] Add rate limiting, validation, audit logs, monitoring and privacy/retention rules.
-- [ ] Test duplicate-seat race conditions, duplicate callbacks, failed payments, refunds and cancellations.
-- [ ] Run production readiness checks and test with a small controlled release.
+- [ ] Finish booking creation and the customer transaction-code submission UI.
+- [ ] Implement manual reconciliation and/or Safaricom C2B confirmation callbacks.
+- [ ] Confirm payment and issue tickets only after server-side verification.
+- [ ] Add ticket delivery, cancellation/refund policy, rate limiting, audit logs and monitoring.
+- [ ] Test simultaneous seat selection, duplicate receipts, failed/unverified payments and expired holds.
 
-## Security notes
+## Security
 
-- Never commit `.env` or live API keys.
+- Never commit `.env` or private keys.
 - Use HTTPS in production.
 - Keep admin routes private and enforce authorization on the server.
-- Treat payment callbacks as untrusted until validated.
-- A booking is not confirmed until payment is verified and seat inventory is secured.
+- Treat customer-submitted transaction codes as claims, not proof of payment.
