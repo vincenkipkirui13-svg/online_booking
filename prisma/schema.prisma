@@ -42,67 +42,69 @@ model Route {
 }
 
 model Bus {
-  id          String   @id @default(cuid())
-  name        String
-  registration String  @unique
+  id           String   @id @default(cuid())
+  name         String
+  registration String   @unique
   seatCapacity Int
-  active      Boolean  @default(true)
-  trips       Trip[]
-  createdAt   DateTime @default(now())
+  active       Boolean  @default(true)
+  trips        Trip[]
+  createdAt    DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
 
 model Trip {
-  id             String   @id @default(cuid())
-  routeId        String
-  busId          String
-  departureAt    DateTime
-  arrivalAt      DateTime?
-  fareKes        Int
-  status         String   @default("SCHEDULED")
-  route          Route    @relation(fields: [routeId], references: [id])
-  bus            Bus      @relation(fields: [busId], references: [id])
-  bookings       Booking[]
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  id          String   @id @default(cuid())
+  routeId     String
+  busId       String
+  departureAt DateTime
+  arrivalAt   DateTime?
+  fareKes     Int
+  status      String   @default("SCHEDULED")
+  route       Route    @relation(fields: [routeId], references: [id])
+  bus         Bus      @relation(fields: [busId], references: [id])
+  bookings    Booking[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   @@index([routeId, departureAt, status])
   @@index([busId, departureAt])
 }
 
 model Booking {
-  id              String        @id @default(cuid())
-  reference       String        @unique
-  tripId          String
-  passengerName   String
-  passengerPhone  String
-  passengerEmail  String?
-  seatNumbers     String[]
-  passengerCount  Int
-  totalKes        Int
-  status          BookingStatus @default(PENDING_PAYMENT)
-  trip            Trip          @relation(fields: [tripId], references: [id])
-  payments        Payment[]
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
+  id             String        @id @default(cuid())
+  reference      String        @unique
+  tripId         String
+  passengerName  String
+  passengerPhone String
+  passengerEmail String?
+  seatNumbers    String[]
+  passengerCount Int
+  totalKes       Int
+  status         BookingStatus @default(PENDING_PAYMENT)
+  holdExpiresAt  DateTime?
+  trip           Trip          @relation(fields: [tripId], references: [id])
+  payments       Payment[]
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
 
   @@index([tripId, status])
+  @@index([tripId, holdExpiresAt])
   @@index([passengerPhone, createdAt])
 }
 
 model Payment {
-  id                    String        @id @default(cuid())
-  bookingId             String
-  method                PaymentMethod
-  status                PaymentStatus @default(PENDING)
-  amountKes             Int
-  providerReference      String?       @unique
-  providerCheckoutId    String?       @unique
-  phoneNumber           String?
-  rawCallback            Json?
-  booking                Booking       @relation(fields: [bookingId], references: [id])
-  createdAt              DateTime      @default(now())
-  updatedAt              DateTime      @updatedAt
+  id                 String        @id @default(cuid())
+  bookingId          String
+  method              PaymentMethod
+  status              PaymentStatus @default(PENDING)
+  amountKes           Int
+  providerReference   String?       @unique
+  providerCheckoutId  String?       @unique
+  phoneNumber         String?
+  rawCallback         Json?
+  booking             Booking       @relation(fields: [bookingId], references: [id])
+  createdAt           DateTime      @default(now())
+  updatedAt           DateTime      @updatedAt
 
   @@index([bookingId, status])
 }
