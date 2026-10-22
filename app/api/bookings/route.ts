@@ -1,5 +1,5 @@
 import { randomBytes } from "node:crypto";
-import { BookingStatus, PaymentMethod, Prisma } from "@prisma/client";
+import { BookingStatus, Prisma } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
@@ -12,7 +12,7 @@ const bookingSchema = z.object({
   passengerPhone: z.string().trim().regex(/^(?:\+?254|0)[17]\d{8}$/, "Enter a valid Kenyan mobile number."),
   passengerEmail: z.union([z.string().trim().email().max(200), z.literal("")]).optional(),
   seatNumbers: z.array(z.string().trim().regex(/^\d{1,2}$/)).min(1).max(6),
-  paymentMethod: z.enum(["MPESA", "CARD"])
+  paymentMethod: z.literal("MPESA").default("MPESA")
 }).superRefine((value, context) => {
   if (new Set(value.seatNumbers).size !== value.seatNumbers.length) {
     context.addIssue({ code: "custom", path: ["seatNumbers"], message: "Each passenger must have a different seat." });
@@ -75,7 +75,7 @@ export async function POST(request: NextRequest) {
           holdExpiresAt,
           payments: {
             create: {
-              method: input.paymentMethod as PaymentMethod,
+              method: "MPESA",
               amountKes: trip.fareKes * input.seatNumbers.length,
               status: "PENDING"
             }
