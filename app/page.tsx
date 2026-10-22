@@ -29,10 +29,12 @@ export default function Home() {
   const [paymentInfo, setPaymentInfo] = useState<{ type: string; number: string | null; accountName: string | null; configured: boolean } | null>(null);
   const [loadingPaymentInfo, setLoadingPaymentInfo] = useState(false);
   const [fleetHeroPhoto, setFleetHeroPhoto] = useState<string | null>(null);
+  const [routePhotos, setRoutePhotos] = useState<Record<string, string | null>>({});
 
   useEffect(() => {
     fetch("/api/site-photos", { cache: "no-store" }).then((response) => response.ok ? response.json() : null).then((data) => {
-      if (data?.photos?.[0]?.url) setFleetHeroPhoto(data.photos[0].url);
+      if (data?.slots?.hero) setFleetHeroPhoto(data.slots.hero);
+      if (data?.slots) setRoutePhotos(data.slots);
     }).catch(() => undefined);
   }, []);
 
@@ -133,7 +135,7 @@ export default function Home() {
           </section>}
           {notice && <div className="inline-notice" role="status">{notice}</div>}</div>}
         </> : <div className="popular-heading" id="routes"><div><span className="section-kicker">GO SOMEWHERE NEW</span><h2>Popular journeys</h2><p>From quick getaways to long-distance adventures.</p></div><span className="popular-note">YOUR KENYA, YOUR WAY <span>✳</span></span></div>}
-        {!searched && <div className="route-cards">{[{from:"Nairobi",to:"Nakuru",time:"Approx. 2.5 hours",price:"KSh 800",image:"route-lake",tag:"A QUICK GETAWAY"},{from:"Nairobi",to:"Eldoret",time:"Approx. 6 hours",price:"KSh 1,500",image:"route-hills",tag:"THE WEST CALLS"},{from:"Nairobi",to:"Mombasa",time:"Night coach · 7:30 PM / 8:00 PM",price:"KSh 2,500",image:"route-coast",tag:"COASTAL ESCAPE"}].map((route) => <button className="route-card" key={route.to} onClick={() => { setFrom(route.from); setTo(route.to); setSearched(false); document.getElementById("book")?.scrollIntoView({behavior:"smooth"}); }}><div className={"route-photo " + route.image}><span>{route.tag}</span><span className="route-photo-arrow">↗</span></div><div className="route-card-body"><div><span>{route.from} <span className="route-arrow">→</span> {route.to}</span><small>{route.time}</small></div><strong>{route.price}<small> / person</small></strong></div></button>)}</div>}
+        {!searched && <div className="route-cards">{[{from:"Nairobi",to:"Nakuru",time:"Approx. 2.5 hours",price:"KSh 800",image:"route-lake",tag:"A QUICK GETAWAY"},{from:"Nairobi",to:"Eldoret",time:"Approx. 6 hours",price:"KSh 1,500",image:"route-hills",tag:"THE WEST CALLS"},{from:"Nairobi",to:"Mombasa",time:"Night coach · 7:30 PM / 8:00 PM",price:"KSh 2,500",image:"route-coast",tag:"COASTAL ESCAPE"}].map((route) => <button className="route-card" key={route.to} onClick={() => { setFrom(route.from); setTo(route.to); setSearched(false); document.getElementById("book")?.scrollIntoView({behavior:"smooth"}); }}><div className={"route-photo " + route.image} style={routePhotos[route.image === "route-lake" ? "route-nakuru" : route.image === "route-hills" ? "route-eldoret" : "route-mombasa"] ? { backgroundImage: `linear-gradient(0deg, rgba(8,26,43,.3), transparent 70%), url("${routePhotos[route.image === "route-lake" ? "route-nakuru" : route.image === "route-hills" ? "route-eldoret" : "route-mombasa"]}")` } : undefined}><span>{route.tag}</span><span className="route-photo-arrow">↗</span></div><div className="route-card-body"><div><span>{route.from} <span className="route-arrow">→</span> {route.to}</span><small>{route.time}</small></div><strong>{route.price}<small> / person</small></strong></div></button>)}</div>}
       </section>
 
       <section className="why-section" id="why-us"><div className="wrap why-grid"><div><span className="section-kicker">TRAVEL, WITHOUT THE FUSS</span><h2>Less planning.<br /><em>More living.</em></h2><p>We believe getting there should be part of the good experience. We&apos;re building a simpler way to explore Kenya, one journey at a time.</p><a href="#book" className="dark-link">Plan your next trip <span>→</span></a></div><div className="why-points"><article><span>01</span><div><h3>Choose what works for you</h3><p>Compare journey times, fares and seat options in one place.</p></div></article><article><span>02</span><div><h3>Book around your day</h3><p>Find a departure that fits your plans, whether early or late.</p></div></article><article><span>03</span><div><h3>Pay your way</h3><p>Pay directly to the business Paybill or Till. The business will check the payment and confirm your booking.</p></div></article></div></div></section>
