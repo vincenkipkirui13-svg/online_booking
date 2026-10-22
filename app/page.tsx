@@ -52,40 +52,28 @@ export default function Home() {
 
   async function continueBooking(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setNotice("");
-    setPaymentInfo(null);
-    setLoadingPaymentInfo(true);
-    try {
-      const response = await fetch("/api/payment-instructions", { cache: "no-store" });
-      if (!response.ok) throw new Error("Payment instructions are not available right now.");
-      const info = await response.json();
-      setPaymentInfo(info);
-      const trip = results.find((item) => item.id === selected);
-      const name = (document.querySelector('input[placeholder="As shown on your ID"]') as HTMLInputElement | null)?.value || "";
-      const phone = (document.querySelector('input[placeholder="07XX XXX XXX"]') as HTMLInputElement | null)?.value || "";
-      const email = (document.querySelector('input[placeholder="you@example.com"]') as HTMLInputElement | null)?.value || "Not provided";
-      const message = [
-        "PRESTIGE SHUTTLE — BOOKING REQUEST",
-        "",
-        "Passenger: " + name,
-        "Phone: " + phone,
-        "Email: " + email,
-        "From: " + (trip?.from || from),
-        "Destination: " + (trip?.to || to),
-        "Travel date: " + date,
-        "Passengers: " + passengers,
-        "Estimated fare per passenger: KSh " + (trip?.fare ?? "To confirm"),
-        "Payment: M-Pesa, payment checked and booking confirmed manually by Prestige Shuttle.",
-        "",
-        "Please confirm availability and the total fare."
-      ].join("\n");
-      setNotice("Your booking request is ready. WhatsApp is opening so you can send it directly to Prestige Shuttle.");
-      openWhatsApp(message);
-    } catch {
-      setNotice("Payment instructions are not available yet. Please contact the business before sending any money.");
-    } finally {
-      setLoadingPaymentInfo(false);
-    }
+    const trip = results.find((item) => item.id === selected);
+    const form = event.currentTarget;
+    const name = (form.querySelector('input[placeholder="As shown on your ID"]') as HTMLInputElement | null)?.value || "";
+    const phone = (form.querySelector('input[placeholder="07XX XXX XXX"]') as HTMLInputElement | null)?.value || "";
+    const email = (form.querySelector('input[placeholder="you@example.com"]') as HTMLInputElement | null)?.value || "Not provided";
+    const message = [
+      "PRESTIGE SHUTTLE — BOOKING REQUEST",
+      "",
+      "Passenger: " + name,
+      "Phone: " + phone,
+      "Email: " + email,
+      "From: " + (trip?.from || from),
+      "Destination: " + (trip?.to || to),
+      "Travel date: " + date,
+      "Passengers: " + passengers,
+      "Fare shown: KSh " + (trip?.fare ?? "Please confirm"),
+      "",
+      "Please confirm availability, departure time and total fare.",
+      "I understand this is a booking request and is not confirmed until Prestige Shuttle replies."
+    ].join("\\n");
+    setNotice("Opening WhatsApp with your booking details. Tap Send in WhatsApp to send your request.");
+    window.location.href = "https://wa.me/254733672905?text=" + encodeURIComponent(message);
   }
 
   return (
