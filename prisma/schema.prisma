@@ -16,7 +16,6 @@ enum BookingStatus {
 
 enum PaymentMethod {
   MPESA
-  CARD
 }
 
 enum PaymentStatus {
@@ -49,7 +48,7 @@ model Bus {
   active       Boolean  @default(true)
   trips        Trip[]
   createdAt    DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  updatedAt    DateTime @updatedAt
 }
 
 model Trip {
@@ -93,18 +92,20 @@ model Booking {
 }
 
 model Payment {
-  id                 String        @id @default(cuid())
-  bookingId          String
-  method              PaymentMethod
-  status              PaymentStatus @default(PENDING)
-  amountKes           Int
-  providerReference   String?       @unique
-  providerCheckoutId  String?       @unique
-  phoneNumber         String?
-  rawCallback         Json?
-  booking             Booking       @relation(fields: [bookingId], references: [id])
-  createdAt           DateTime      @default(now())
-  updatedAt           DateTime      @updatedAt
+  id                    String        @id @default(cuid())
+  bookingId             String
+  method                PaymentMethod @default(MPESA)
+  status                PaymentStatus  @default(PENDING)
+  amountKes             Int
+  providerReference     String?        @unique
+  providerCheckoutId    String?        @unique
+  customerTransactionCode String?      @unique
+  paymentSubmittedAt    DateTime?
+  phoneNumber           String?
+  rawCallback           Json?
+  booking               Booking       @relation(fields: [bookingId], references: [id])
+  createdAt             DateTime      @default(now())
+  updatedAt             DateTime      @updatedAt
 
   @@index([bookingId, status])
 }
