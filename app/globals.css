@@ -353,3 +353,28 @@
   .route-card-body > strong { font-size: 16px !important; padding: 7px 8px !important; }
   .route-card-body > strong small { font-size: 9px !important; }
 }
+
+
+/* Show the complete logo artwork inside the round frame without cutting its edges. */
+.brand-logo {
+  width: 58px !important;
+  height: 58px !important;
+  min-width: 58px !important;
+  min-height: 58px !important;
+  box-sizing: border-box !important;
+  border-radius: 50% !important;
+  object-fit: contain !important;
+  object-position: center !important;
+  padding: 2px !important;
+  background: #fff !important;
+  overflow: hidden !important;
+}
+@media (max-width: 760px) {
+  .brand-logo {
+    width: 49px !important;
+    height: 49px !important;
+    min-width: 49px !important;
+    min-height: 49px !important;
+    padding: 2px !important;
+  }
+}
