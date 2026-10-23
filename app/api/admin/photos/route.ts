@@ -5,7 +5,7 @@ import { isAdminRequest } from "@/lib/admin-auth";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const SLOTS = ["hero", "route-nakuru", "route-eldoret", "route-mombasa", "gallery"] as const;
+const SLOTS = ["hero", "logo", "route-nakuru", "route-eldoret", "route-mombasa", "gallery"] as const;
 type Slot = typeof SLOTS[number];
 
 export async function GET(request: NextRequest) {

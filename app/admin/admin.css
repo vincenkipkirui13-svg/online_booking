@@ -14,3 +14,5 @@
 .admin-gallery article .admin-delete:disabled{opacity:.55;cursor:wait}
 .admin-empty{padding:22px;border:1px dashed #d2dce5;border-radius:10px;color:#708294;font-size:12px;text-align:center;margin-top:20px}
 .admin-notice{overflow-wrap:anywhere}
+
+.admin-upload select{display:block;width:100%;margin-top:7px;padding:13px;border:1px solid #d7e0e8;border-radius:8px;background:white;color:#243d51;font:inherit;font-size:12px}

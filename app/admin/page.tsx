@@ -6,6 +6,7 @@ import { FormEvent, useEffect, useState } from "react";
 type Photo = { url: string; pathname: string; uploadedAt?: string; slot: string };
 const placements = [
   { value: "hero", label: "Hero background (main banner)" },
+  { value: "logo", label: "Website logo (header and footer)" },
   { value: "route-nakuru", label: "Nairobi → Nakuru route card" },
   { value: "route-eldoret", label: "Nairobi → Eldoret route card" },
   { value: "route-mombasa", label: "Nairobi → Mombasa route card" },
@@ -83,7 +84,7 @@ export default function AdminPage() {
     <a href="/" className="admin-back">← Prestige Shuttle website</a>
     <p className="admin-kicker">PRESTIGE SHUTTLE • MANAGEMENT</p>
     <h1>Website photo manager</h1>
-    <p className="admin-intro">Add or remove the real photographs used across your website. Assign uploads to the hero banner or any route card. Your images are stored persistently in Vercel Blob and survive new deployments.</p>
+    <p className="admin-intro">Add or remove the real photographs used across your website. You can now replace the website logo, hero image, route photos and gallery images. Uploads are stored in Vercel Blob and survive new deployments.</p>
     {!loggedIn ? <form className="admin-login" onSubmit={login}>
       <label>Username<input autoComplete="username" value={username} onChange={(e) => setUsername(e.target.value)} required /></label>
       <label>Password<input autoComplete="current-password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required /></label>
@@ -95,7 +96,7 @@ export default function AdminPage() {
         <select id="photo-placement" value={slot} onChange={(e) => setSlot(e.target.value)}>{placements.map((placement) => <option key={placement.value} value={placement.value}>{placement.label}</option>)}</select>
         <label htmlFor="prestige-photos">Choose photos (up to 10 per upload)</label>
         <input id="prestige-photos" type="file" accept="image/*" multiple onChange={(e) => setFiles(e.target.files)} />
-        <small>Use original photos of your actual vehicles. Each image must be 8 MB or smaller. The newest photo assigned to a placement is shown on the public site.</small>
+        <small>Use original vehicle photos for route and gallery placements. For the logo, upload a clear PNG or WebP with a transparent background if possible. Each image must be 8 MB or smaller. The newest photo assigned to a placement is shown on the public site.</small>
         <button disabled={busy}>{busy ? "Working…" : "Upload selected photos"}</button>
       </form>
       <div className="admin-gallery-title"><h2>All website photos</h2><span>{photos.length} stored</span></div>

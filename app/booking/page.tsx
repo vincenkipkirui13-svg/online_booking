@@ -13,8 +13,10 @@ export default function BookingPage() {
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [notice, setNotice] = useState("");
+  const [logoPhoto, setLogoPhoto] = useState<string | null>(null);
 
   useEffect(() => {
+    fetch("/api/site-photos", { cache: "no-store" }).then((response) => response.ok ? response.json() : null).then((data) => { if (data?.slots?.logo) setLogoPhoto(data.slots.logo); }).catch(() => undefined);
     const params = new URLSearchParams(window.location.search);
     const requestedFrom = params.get("from");
     const requestedTo = params.get("to");
@@ -57,7 +59,7 @@ export default function BookingPage() {
     <main className="booking-page">
       <div className="announcement"><span className="pulse-dot" /> PRESTIGE SHUTTLE <span className="announcement-divider">·</span> BOOK YOUR JOURNEY</div>
       <header className="nav wrap booking-nav">
-        <a href="/" className="brand" aria-label="Prestige Shuttle home"><span className="brand-mark">S</span><span>Prestige<span className="brand-light"> Shuttle</span><small>TRAVEL WITH CONFIDENCE</small></span></a>
+        <a href="/" className="brand" aria-label="Prestige Shuttle home">{logoPhoto ? <img className="brand-logo" src={logoPhoto} alt="Prestige Shuttle logo" /> : <span className="brand-mark">S</span>}<span>Prestige<span className="brand-light"> Shuttle</span><small>TRAVEL WITH CONFIDENCE</small></span></a>
         <a className="nav-cta" href="/">Back to home <span>↗</span></a>
       </header>
 

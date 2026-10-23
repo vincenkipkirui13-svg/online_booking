@@ -15,6 +15,7 @@ export async function GET() {
       photos,
       slots: {
         hero: firstFor("hero") || legacyHero,
+        logo: firstFor("logo"),
         "route-nakuru": firstFor("route-nakuru"),
         "route-eldoret": firstFor("route-eldoret"),
         "route-mombasa": firstFor("route-mombasa")

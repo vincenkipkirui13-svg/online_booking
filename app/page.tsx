@@ -16,6 +16,18 @@ const sampleTrips = [
   { id: "t10", from: "Mombasa", to: "Nairobi", depart: "20:30", arrive: "05:00", duration: "8h 30m", fare: 2200, bus: "Sleeper Coach", seats: 10 }
 ];
 
+const dailyRoutes: [string, string, string][] = [
+["Nairobi ⇌ Nakuru","KSh 800","Daily departures"],["Nairobi ⇌ Kericho","KSh 1,300","Daily scheduled departures"],["Nairobi ⇌ Kitale","KSh 1,600","Daily scheduled departures"],["Nairobi ⇌ Kisumu","KSh 1,800","Daily scheduled departures"],["Nairobi ⇌ Eldoret","KSh 1,500","Daily scheduled departures"],["Nairobi ⇌ Kakamega","KSh 1,800","Daily scheduled departures"],["Nairobi ⇌ Mbale","KSh 1,800","Daily scheduled departures"],["Nairobi ⇌ Bungoma","KSh 1,800","Daily scheduled departures"],["Nairobi ⇌ Busia","KSh 1,800","Daily scheduled departures"],["Nairobi ⇌ Thika","KSh 300","Every 30 minutes · 6:00 AM–7:00 PM"],["Nairobi → Mombasa","KSh 2,500","Night luxury coach · 7:30 PM / 8:00 PM"],["Nairobi → Malindi","KSh 3,000","Night luxury coach · 7:30 PM"],["Nairobi → Heaven's Gate","KSh 700","Daily"],["Nairobi → Naivasha","KSh 600","Daily"],["Nakuru → Kisumu","KSh 1,000","Daily"],["Nakuru → Eldoret","KSh 700","Daily"],["Nakuru → Bungoma","KSh 1,000","Daily"],["Nakuru → Nairobi","KSh 800","Daily"],["Nakuru ⇌ Western Hubs","KSh 600–1,000","Connections via Kisumu, Eldoret and Bungoma"],["Kisumu → Bungoma","KSh 500","Daily · Book"],["Kisumu → Eldoret","KSh 400","Daily · Book"],["Eldoret → Bungoma","KSh 400","Daily · Book"],["Eldoret → Kitale","KSh 300","Daily · Book"]
+];
+const galleryNotes = [
+  "Choose Prestige Shuttle for a comfortable, dependable journey across Kenya.",
+  "Your plans matter to us — travel with confidence from departure to arrival.",
+  "Let us take the stress out of the road. We look forward to having you on board.",
+  "Friendly service and a smoother journey start with Prestige Shuttle.",
+  "Going somewhere new? Make Prestige Shuttle part of your next trip.",
+  "We value every passenger. Thank you for choosing to travel with us."
+];
+
 const money = (amount: number) => new Intl.NumberFormat("en-KE", { style: "currency", currency: "KES", maximumFractionDigits: 0 }).format(amount);
 
 export default function Home() {
@@ -30,16 +42,32 @@ export default function Home() {
   const [loadingPaymentInfo, setLoadingPaymentInfo] = useState(false);
   const [fleetHeroPhoto, setFleetHeroPhoto] = useState<string | null>(null);
   const [routePhotos, setRoutePhotos] = useState<Record<string, string | null>>({});
+  const [photosLoaded, setPhotosLoaded] = useState(false);
+  const [logoPhoto, setLogoPhoto] = useState<string | null>(null);
+  const [galleryPhotos, setGalleryPhotos] = useState<Array<{ url: string; pathname: string }>>([]);
+  const [departureSearch, setDepartureSearch] = useState("");
+  const [showAllDepartures, setShowAllDepartures] = useState(false);
 
   useEffect(() => {
-    fetch("/api/site-photos", { cache: "no-store" }).then((response) => response.ok ? response.json() : null).then((data) => {
-      if (data?.slots?.hero) setFleetHeroPhoto(data.slots.hero);
-      if (data?.slots) setRoutePhotos(data.slots);
-    }).catch(() => undefined);
+    let active = true;
+    fetch("/api/site-photos", { cache: "no-store" })
+      .then((response) => response.ok ? response.json() : null)
+      .then((data) => {
+        if (!active) return;
+        if (data?.slots?.hero) setFleetHeroPhoto(data.slots.hero);
+        if (data?.slots?.logo) setLogoPhoto(data.slots.logo);
+        if (data?.slots) setRoutePhotos(data.slots);
+        if (Array.isArray(data?.photos)) setGalleryPhotos(data.photos.filter((photo: { slot?: string }) => photo.slot === "gallery"));
+      })
+      .catch(() => undefined)
+      .finally(() => { if (active) setPhotosLoaded(true); });
+    return () => { active = false; };
   }, []);
 
   const results = useMemo(() => sampleTrips.filter((trip) => trip.from === from && trip.to === to), [from, to]);
   const today = new Date().toISOString().slice(0, 10);
+  const filteredDepartureRoutes = dailyRoutes.filter(([route]) => route.toLowerCase().includes(departureSearch.trim().toLowerCase()));
+  const visibleDepartureRoutes = showAllDepartures ? filteredDepartureRoutes : filteredDepartureRoutes.slice(0, 6);
 
   function searchTrips(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -89,13 +117,13 @@ export default function Home() {
     <main>
       <div className="announcement"><span className="pulse-dot" /> PRESTIGE SHUTTLE • DAILY KENYA ROUTES <span className="announcement-divider">·</span> TRAVEL ACROSS KENYA</div>
       <header className="nav wrap">
-        <a href="#" className="brand" aria-label="Prestige Shuttle home"><span className="brand-mark">S</span><span>Prestige<span className="brand-light"> Shuttle</span><small>TRAVEL WITH CONFIDENCE</small></span></a>
+        <a href="#" className="brand" aria-label="Prestige Shuttle home">{logoPhoto ? <img className="brand-logo" src={logoPhoto} alt="Prestige Shuttle logo" /> : <span className="brand-mark">S</span>}<span>Prestige<span className="brand-light"> Shuttle</span><small>TRAVEL WITH CONFIDENCE</small></span></a>
         <nav><a href="#all-routes">Routes & fares</a><a href="#why-us">Why Prestige Shuttle</a><a href="#help">Help</a></nav>
         <a className="nav-cta" href="/booking">Book a trip <span>↗</span></a>
       </header>
 
       <section className="hero">
-        <div className="hero-image" aria-hidden="true"><img className="hero-photo" src={fleetHeroPhoto || "https://images.unsplash.com/photo-1570125909232-eb263c188f7e?auto=format&fit=max&w=1600&q=90"} alt="" /></div>
+        <div className="hero-image" aria-hidden="true"><img className="hero-photo" style={{ visibility: photosLoaded ? "visible" : "hidden" }} src={fleetHeroPhoto || "https://images.unsplash.com/photo-1570125909232-eb263c188f7e?auto=format&fit=max&w=1600&q=90"} alt="" /></div>
         <div className="hero-shade" aria-hidden="true" />
         <div className="hero-content wrap">
           <div className="eyebrow"><span /> YOUR JOURNEY STARTS WITH PRESTIGE</div>
@@ -121,14 +149,13 @@ export default function Home() {
           </section>}
           {notice && <div className="inline-notice" role="status">{notice}</div>}</div>}
         </> : <div className="popular-heading" id="routes"><div><span className="section-kicker">GO SOMEWHERE NEW</span><h2>Popular journeys</h2><p>From quick getaways to long-distance adventures.</p></div><span className="popular-note">YOUR KENYA, YOUR WAY <span>✳</span></span></div>}
-        {!searched && <div className="route-cards">{[{from:"Nairobi",to:"Nakuru",time:"Approx. 2.5 hours",price:"KSh 800",image:"route-lake",tag:"A QUICK GETAWAY"},{from:"Nairobi",to:"Eldoret",time:"Approx. 6 hours",price:"KSh 1,500",image:"route-hills",tag:"THE WEST CALLS"},{from:"Nairobi",to:"Mombasa",time:"Night coach · 7:30 PM / 8:00 PM",price:"KSh 2,500",image:"route-coast",tag:"COASTAL ESCAPE"}].map((route) => <button className="route-card" key={route.to} onClick={() => { window.location.href = "/booking?from=" + encodeURIComponent(route.from) + "&to=" + encodeURIComponent(route.to); }}><div className={"route-photo " + route.image}><img className="route-photo-image" src={routePhotos[route.image === "route-lake" ? "route-nakuru" : route.image === "route-hills" ? "route-eldoret" : "route-mombasa"] || (route.image === "route-lake" ? "https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?auto=format&fit=max&w=1200&q=90" : route.image === "route-hills" ? "https://images.unsplash.com/photo-1511497584788-876760111969?auto=format&fit=max&w=1200&q=90" : "https://images.unsplash.com/photo-1510414842594-a61c69b5ae57?auto=format&fit=max&w=1200&q=90")} alt={route.from + " to " + route.to} loading="lazy" /><span>{route.tag}</span><span className="route-photo-arrow">↗</span></div><div className="route-card-body"><div><span>{route.from} <span className="route-arrow">→</span> {route.to}</span><small>{route.time}</small></div><strong>{route.price}<small> / person</small></strong></div></button>)}</div>}
+        {!searched && <div className="route-cards">{[{from:"Nairobi",to:"Nakuru",time:"Approx. 2.5 hours",price:"KSh 800",image:"route-lake",tag:"A QUICK GETAWAY"},{from:"Nairobi",to:"Eldoret",time:"Approx. 6 hours",price:"KSh 1,500",image:"route-hills",tag:"THE WEST CALLS"},{from:"Nairobi",to:"Mombasa",time:"Night coach · 7:30 PM / 8:00 PM",price:"KSh 2,500",image:"route-coast",tag:"COASTAL ESCAPE"}].map((route) => <button className="route-card" key={route.to} onClick={() => { window.location.href = "/booking?from=" + encodeURIComponent(route.from) + "&to=" + encodeURIComponent(route.to); }}><div className={"route-photo " + route.image}><img className="route-photo-image" style={{ visibility: photosLoaded ? "visible" : "hidden" }} src={routePhotos[route.image === "route-lake" ? "route-nakuru" : route.image === "route-hills" ? "route-eldoret" : "route-mombasa"] || (route.image === "route-lake" ? "https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?auto=format&fit=max&w=1200&q=90" : route.image === "route-hills" ? "https://images.unsplash.com/photo-1511497584788-876760111969?auto=format&fit=max&w=1200&q=90" : "https://images.unsplash.com/photo-1510414842594-a61c69b5ae57?auto=format&fit=max&w=1200&q=90")} alt={route.from + " to " + route.to} loading="lazy" /><span>{route.tag}</span><span className="route-photo-arrow">↗</span></div><div className="route-card-body"><div><span>{route.from} <span className="route-arrow">→</span> {route.to}</span><small>{route.time}</small></div><strong>{route.price}<small> / person</small></strong></div></button>)}</div>}
       </section>
 
       <section className="why-section" id="why-us"><div className="wrap why-grid"><div><span className="section-kicker">TRAVEL, WITHOUT THE FUSS</span><h2>Less planning.<br /><em>More living.</em></h2><p>We believe getting there should be part of the good experience. We&apos;re building a simpler way to explore Kenya, one journey at a time.</p><a href="/booking" className="dark-link">Plan your next trip <span>→</span></a></div><div className="why-points"><article><span>01</span><div><h3>Choose what works for you</h3><p>Compare journey times, fares and seat options in one place.</p></div></article><article><span>02</span><div><h3>Book around your day</h3><p>Find a departure that fits your plans, whether early or late.</p></div></article><article><span>03</span><div><h3>Pay your way</h3><p>Pay directly to the business Paybill or Till. The business will check the payment and confirm your booking.</p></div></article></div></div></section>
 
-      <section className="all-routes-section" id="all-routes"><div className="wrap"><div className="popular-heading"><div><span className="section-kicker">DAILY DEPARTURES</span><h2>Daily shuttle routes &amp; fares</h2><p>Reliable Travel • Comfortable Journeys • Daily Departures</p></div></div><div className="route-fare-grid">{[
-["Nairobi ⇌ Nakuru","KSh 800","Daily departures"],["Nairobi ⇌ Kericho","KSh 1,300","Daily scheduled departures"],["Nairobi ⇌ Kitale","KSh 1,600","Daily scheduled departures"],["Nairobi ⇌ Kisumu","KSh 1,800","Daily scheduled departures"],["Nairobi ⇌ Eldoret","KSh 1,500","Daily scheduled departures"],["Nairobi ⇌ Kakamega","KSh 1,800","Daily scheduled departures"],["Nairobi ⇌ Mbale","KSh 1,800","Daily scheduled departures"],["Nairobi ⇌ Bungoma","KSh 1,800","Daily scheduled departures"],["Nairobi ⇌ Busia","KSh 1,800","Daily scheduled departures"],["Nairobi ⇌ Thika","KSh 300","Every 30 minutes · 6:00 AM–7:00 PM"],["Nairobi → Mombasa","KSh 2,500","Night luxury coach · 7:30 PM / 8:00 PM"],["Nairobi → Malindi","KSh 3,000","Night luxury coach · 7:30 PM"],["Nairobi → Heaven's Gate","KSh 700","Daily"],["Nairobi → Naivasha","KSh 600","Daily"],["Nakuru → Kisumu","KSh 1,000","Daily"],["Nakuru → Eldoret","KSh 700","Daily"],["Nakuru → Bungoma","KSh 1,000","Daily"],["Nakuru → Nairobi","KSh 800","Daily"],["Nakuru ⇌ Western Hubs","KSh 600–1,000","Connections via Kisumu, Eldoret and Bungoma"],["Kisumu → Bungoma","KSh 500","Daily · Book"],["Kisumu → Eldoret","KSh 400","Daily · Book"],["Eldoret → Bungoma","KSh 400","Daily · Book"],["Eldoret → Kitale","KSh 300","Daily · Book"]
-].map(([route, fare, schedule]) => <article className="fare-card" key={route}><span className="fare-card-icon">↗</span><div><h3>{route}</h3><p>{schedule}</p></div><strong>{fare}</strong><button onClick={() => { const parts = route.replace("⇌", "→").split("→").map((v) => v.trim()); setFrom(parts[0]); setTo(parts[1] || parts[0]); document.getElementById("book")?.scrollIntoView({behavior:"smooth"}); }}>Book <span>→</span></button></article>)}</div><div className="service-banner"><div><span className="section-kicker">MORE THAN A JOURNEY</span><h2>Passenger &amp; parcel services</h2><p>Travel safely, comfortably and conveniently to your destination. Contact us for parcel enquiries and route confirmation.</p></div><a href="https://wa.me/254733672905?text=Hello%20Prestige%20Shuttle%2C%20I%20would%20like%20to%20enquire%20about%20passenger%20or%20parcel%20services." target="_blank" rel="noreferrer">Enquire on WhatsApp ↗</a></div></div></section>
+      <section className="all-routes-section" id="all-routes"><div className="wrap"><div className="popular-heading"><div><span className="section-kicker">DAILY DEPARTURES</span><h2>Daily shuttle routes &amp; fares</h2><p>Reliable Travel • Comfortable Journeys • Daily Departures</p></div></div><div className="departure-tools"><label htmlFor="departure-search">Find a destination</label><div className="departure-search-row"><input id="departure-search" type="search" placeholder="Search Nairobi, Nakuru, Eldoret…" value={departureSearch} onChange={(event) => { setDepartureSearch(event.target.value); setShowAllDepartures(true); }} onKeyDown={(event) => { if (event.key === "Enter") setShowAllDepartures(true); }} /><button className="departure-search-button" type="button" onClick={() => setShowAllDepartures(true)}>Search <span>⌕</span></button></div></div><div className="route-fare-grid">{visibleDepartureRoutes.map(([route, fare, schedule]) => <article className="fare-card" key={route}><span className="fare-card-icon">↗</span><div><h3>{route}</h3><p>{schedule}</p></div><strong>{fare}</strong><button type="button" onClick={() => { const parts = route.replace("⇌", "→").split("→").map((v) => v.trim()); window.location.href = "/booking?from=" + encodeURIComponent(parts[0]) + "&to=" + encodeURIComponent(parts[1] || "Nakuru"); }}>Book <span>→</span></button></article>)}</div>{filteredDepartureRoutes.length > 6 && <div className="departure-more-wrap"><button type="button" className="departure-more-button" onClick={() => setShowAllDepartures((current) => !current)}>{showAllDepartures ? "Show fewer destinations" : "See more destinations"} <span>{showAllDepartures ? "↑" : "↓"}</span></button></div>}<div className="service-banner"><div><span className="section-kicker">MORE THAN A JOURNEY</span><h2>Passenger &amp; parcel services</h2><p>Travel safely, comfortably and conveniently to your destination. Contact us for parcel enquiries and route confirmation.</p></div><a href="https://wa.me/254733672905?text=Hello%20Prestige%20Shuttle%2C%20I%20would%20like%20to%20enquire%20about%20passenger%20or%20parcel%20services." target="_blank" rel="noreferrer">Enquire on WhatsApp ↗</a></div></div></section>
+      <section className="fleet-gallery-section" id="gallery"><div className="wrap"><div className="popular-heading"><div><span className="section-kicker">A CLOSER LOOK</span><h2>Our fleet gallery</h2><p>A glimpse of the Prestige Shuttle experience. We’ll add your selected photos here as you upload them in the admin section.</p></div></div>{galleryPhotos.length ? <div className="fleet-gallery-grid">{galleryPhotos.map((photo, index) => <article className="fleet-gallery-card" key={photo.pathname}><img src={photo.url} alt={"Prestige Shuttle gallery photo " + (index + 1)} loading="lazy" /><p>{galleryNotes[index % galleryNotes.length]}</p></article>)}</div> : <div className="fleet-gallery-empty"><span>✦</span><h3>Our gallery is getting ready</h3><p>No gallery photos have been added yet. Sign in to the admin section and upload your photos under “General site photo / gallery”.</p></div>}</div></section>
       <footer id="help"><div className="wrap footer-main"><a href="#" className="brand footer-brand"><span className="brand-mark">S</span><span>Prestige<span className="brand-light"> Shuttle</span><small>TRAVEL WITH CONFIDENCE</small></span></a><p>Your journey, your people, your Kenya.<br />Daily shuttle services across Kenya. Contact our team to confirm your journey.</p><div className="footer-links"><a href="/booking">Find a trip</a><a href="#all-routes">Routes &amp; fares</a><a href="mailto:Pshuttleltd@gmail.com">Pshuttleltd@gmail.com</a><a href="tel:+254733672905">0733672905</a><a href="https://www.facebook.com/share/g/1CSzr3Zjze/" target="_blank" rel="noreferrer">Facebook community</a><a href="https://www.facebook.com/share/1TfBw49H3L/" target="_blank" rel="noreferrer">Facebook page</a><a href="/admin">Admin</a></div></div><div className="wrap footer-bottom"><span>© {new Date().getFullYear()} Prestige Shuttle. All rights reserved.</span><span>Made for journeys across Kenya <span className="kenya-dot">●</span></span></div></footer>
     <div className="floating-contact" aria-label="Contact Prestige Shuttle"><a className="float-whatsapp" href="https://wa.me/254733672905" target="_blank" rel="noreferrer" aria-label="Chat with Prestige Shuttle on WhatsApp"><span>◉</span><b>WhatsApp</b></a><a className="float-call" href="tel:+254733672905" aria-label="Call Prestige Shuttle"><span>☎</span><b>Call us</b></a></div></main>
   );
