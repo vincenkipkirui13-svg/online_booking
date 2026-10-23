@@ -282,3 +282,74 @@
 .fare-card strong{font-size:17px!important;font-weight:900!important;color:#087f68!important;white-space:nowrap;background:linear-gradient(135deg,#e7f8f2,#f3fbf7);border:1px solid #c7eee0;border-radius:9px;padding:8px 10px;letter-spacing:-.25px}
 @media(max-width:900px){.route-photo{height:245px!important;min-height:245px!important}.fleet-gallery-card img{height:230px}}
 @media(max-width:600px){.route-photo{height:205px!important;min-height:205px!important}.fleet-gallery-card img{height:190px}.gallery-caption{min-height:190px;padding:17px}.gallery-caption p{font-size:11px!important;line-height:1.75!important}.fare-card h3{font-size:13px!important}.fare-card strong{font-size:14px!important;padding:7px 8px}}
+
+
+/* Final polish: make popular-journey fares match the highlighted fare cards and improve logo visibility. */
+.route-card-body > strong {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 3px !important;
+  color: #087f68 !important;
+  background: linear-gradient(135deg, #e7f8f2, #f3fbf7) !important;
+  border: 1px solid #c7eee0 !important;
+  border-radius: 10px !important;
+  padding: 9px 11px !important;
+  font-size: 19px !important;
+  font-weight: 900 !important;
+  line-height: 1.25 !important;
+  white-space: nowrap !important;
+  letter-spacing: -.35px !important;
+}
+.route-card-body > strong small {
+  color: #287a68 !important;
+  font-size: 10px !important;
+  font-weight: 750 !important;
+  letter-spacing: 0 !important;
+}
+.brand {
+  gap: 12px !important;
+}
+.brand-logo {
+  width: 58px !important;
+  height: 58px !important;
+  min-width: 58px !important;
+  border-radius: 50% !important;
+  object-fit: contain !important;
+  padding: 4px !important;
+  background: #fff !important;
+  border: 2px solid #f0b84b !important;
+  box-shadow: 0 3px 12px rgba(8, 26, 43, .18) !important;
+}
+.brand-mark {
+  width: 58px !important;
+  height: 58px !important;
+  min-width: 58px !important;
+  display: grid !important;
+  place-items: center !important;
+  border-radius: 50% !important;
+  font-size: 25px !important;
+  border: 2px solid #f0b84b !important;
+  box-shadow: 0 3px 12px rgba(8, 26, 43, .18) !important;
+}
+.brand > span:last-child {
+  font-size: 19px !important;
+  line-height: 1.1 !important;
+}
+.brand > span:last-child small {
+  display: block !important;
+  margin-top: 5px !important;
+  font-size: 8px !important;
+  letter-spacing: 1.15px !important;
+}
+@media (max-width: 760px) {
+  .brand { gap: 9px !important; }
+  .brand-logo, .brand-mark {
+    width: 49px !important;
+    height: 49px !important;
+    min-width: 49px !important;
+  }
+  .brand > span:last-child { font-size: 17px !important; }
+  .brand > span:last-child small { font-size: 7px !important; letter-spacing: .8px !important; }
+  .route-card-body > strong { font-size: 16px !important; padding: 7px 8px !important; }
+  .route-card-body > strong small { font-size: 9px !important; }
+}
