@@ -378,38 +378,3 @@
     padding: 2px !important;
   }
 }
-
-
-/* Interactive coach seat map on the standalone booking page */
-.seat-picker{margin-top:28px;padding:22px 20px 18px;border:1px solid #dfe6ec;border-radius:12px;background:#fbfcfd}
-.seat-picker-heading h2{font-family:Manrope,sans-serif;color:#152f43;font-size:21px;letter-spacing:-.5px;margin:8px 0 6px}
-.seat-picker-heading p{color:#748291;font-size:11px;line-height:1.7;margin:0;max-width:520px}
-.seat-legend{display:flex;flex-wrap:wrap;gap:16px;margin:22px 0 20px;color:#596b79;font-size:10px;font-weight:700}
-.seat-legend span{display:inline-flex;align-items:center;gap:7px}
-.seat-legend i{display:inline-block;width:17px;height:17px;border-radius:5px;border:1px solid #dce3e9;background:#fff}
-.seat-legend .seat-legend-selected{background:#32a9e8;border-color:#32a9e8}
-.seat-legend .seat-legend-held{background:#eaf0f4;border-color:#eaf0f4}
-.seat-layout{display:grid;gap:8px;max-width:480px;margin:0 auto}
-.seat-row{display:grid;grid-template-columns:minmax(28px,1fr) repeat(4,minmax(0,68px));gap:10px;align-items:center}
-.seat-row-number{font-size:11px;font-weight:700;color:#536779;text-align:center}
-.seat-button{height:49px;min-width:0;border:1px solid #d9e1e8;border-radius:9px;background:#fff;color:#18364d;font-size:12px;font-weight:800;box-shadow:0 1px 2px #0b294009;transition:background .15s,border-color .15s,transform .15s}
-.seat-button.aisle-start{margin-left:24px}
-.seat-button:not(:disabled):hover{border-color:#31a5e5;transform:translateY(-1px)}
-.seat-button.is-selected{background:#32a9e8;border-color:#32a9e8;color:#fff;box-shadow:0 3px 9px #32a9e82b}
-.seat-button.is-held{background:#eaf0f4;border-color:#eaf0f4;color:#8a98a3;cursor:not-allowed;box-shadow:none}
-.seat-button:disabled:not(.is-held){opacity:.48;cursor:not-allowed}
-.seat-selected-summary{display:flex;flex-wrap:wrap;align-items:center;gap:5px;margin-top:24px;color:#253e52;font-size:12px}
-.seat-selected-summary strong{font-weight:800}
-.seat-selected-summary span{color:#748291}
-.seat-selection-hint{margin:10px 0 0;color:#8a6a2e;font-size:10px;line-height:1.6}
-.seat-demo-note{margin:13px 0 0;color:#7a8996;font-size:10px;line-height:1.7}
-@media(max-width:600px){
- .seat-picker{padding:19px 12px 16px;margin-top:23px}
- .seat-picker-heading h2{font-size:19px}
- .seat-legend{gap:10px;font-size:9px;margin:18px 0}
- .seat-layout{gap:7px}
- .seat-row{grid-template-columns:minmax(22px,1fr) repeat(4,minmax(0,1fr));gap:7px}
- .seat-button{height:44px;font-size:11px;border-radius:8px}
- .seat-button.aisle-start{margin-left:13px}
- .seat-selected-summary{font-size:11px}
-}
