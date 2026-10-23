@@ -41,7 +41,11 @@ export default function BookingPage() {
       setNotice("Please choose two different towns.");
       return;
     }
-    if (selectedSeats.length !== Number(passengers)) {\n      setNotice("Please select exactly " + passengers + " seat" + (Number(passengers) === 1 ? "" : "s") + " before continuing.");\n      return;\n    }\n    const message = [
+    if (selectedSeats.length !== Number(passengers)) {
+      setNotice("Please select exactly " + passengers + " seat" + (Number(passengers) === 1 ? "" : "s") + " before continuing.");
+      return;
+    }
+    const message = [
       "PRESTIGE SHUTTLE — BOOKING REQUEST",
       "",
       "Passenger: " + name.trim(),
