@@ -20,8 +20,8 @@ export default function BookingPage() {
     const params = new URLSearchParams(window.location.search);
     const requestedFrom = params.get("from");
     const requestedTo = params.get("to");
-    if (requestedFrom && towns.includes(requestedFrom)) setFrom(requestedFrom);
-    if (requestedTo && towns.includes(requestedTo)) setTo(requestedTo);
+    if (requestedFrom?.trim() && requestedFrom.trim().length <= 80) setFrom(requestedFrom.trim());
+    if (requestedTo?.trim() && requestedTo.trim().length <= 80) setTo(requestedTo.trim());
   }, []);
 
   const today = new Date().toISOString().slice(0, 10);
@@ -33,7 +33,7 @@ export default function BookingPage() {
 
   function submitBooking(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (from === to) {
+    if (from.trim().toLocaleLowerCase() === to.trim().toLocaleLowerCase()) {
       setNotice("Please choose two different towns.");
       return;
     }
@@ -43,8 +43,8 @@ export default function BookingPage() {
       "Passenger: " + name.trim(),
       "Phone: " + phone.trim(),
       "Email: " + (email.trim() || "Not provided"),
-      "From: " + from,
-      "Destination: " + to,
+      "From: " + from.trim(),
+      "Destination: " + to.trim(),
       "Travel date: " + date,
       "Passengers: " + passengers,
       "",
@@ -83,10 +83,11 @@ export default function BookingPage() {
             </div>
 
             <div className="booking-route-fields">
-              <label className="booking-field"><span>FROM</span><select value={from} onChange={(e) => setFrom(e.target.value)} required>{towns.map((town) => <option key={town} value={town}>{town}</option>)}</select></label>
+              <label className="booking-field"><span>FROM</span><input type="text" list="kenya-town-suggestions" autoComplete="off" maxLength={80} placeholder="Enter departure town" value={from} onChange={(e) => setFrom(e.target.value)} required /></label>
               <button className="booking-swap" type="button" onClick={swapRoute} aria-label="Swap departure and destination">⇄</button>
               <label className="booking-field"><span>TO</span><select value={to} onChange={(e) => setTo(e.target.value)} required>{towns.map((town) => <option key={town} value={town}>{town}</option>)}</select></label>
               <label className="booking-field"><span>TRAVEL DATE</span><input type="date" min={today} value={date} onChange={(e) => setDate(e.target.value)} required /></label>
+              <datalist id="kenya-town-suggestions">{towns.map((town) => <option key={town} value={town} />)}</datalist>
               <label className="booking-field"><span>PASSENGERS</span><select value={passengers} onChange={(e) => { setPassengers(e.target.value); setNotice(""); }}>{[1, 2, 3, 4, 5, 6].map((n) => <option key={n} value={n}>{n} {n === 1 ? "Passenger" : "Passengers"}</option>)}</select></label>
             </div>
 
@@ -101,8 +102,8 @@ export default function BookingPage() {
               <label className="booking-field booking-email-field"><span>EMAIL (OPTIONAL)</span><input type="email" autoComplete="email" placeholder="you@example.com" value={email} onChange={(e) => setEmail(e.target.value)} /></label>
             </div>
 
-            {from === to && <p className="booking-inline-error">Choose two different towns before continuing.</p>}
-            <button className="search-button booking-submit" type="submit" disabled={from === to}>Send booking request on WhatsApp <span>→</span></button>
+            {from.trim().toLocaleLowerCase() === to.trim().toLocaleLowerCase() && <p className="booking-inline-error">Choose two different towns before continuing.</p>}
+            <button className="search-button booking-submit" type="submit" disabled={from.trim().toLocaleLowerCase() === to.trim().toLocaleLowerCase() || !from.trim() || !to.trim()}>Send booking request on WhatsApp <span>→</span></button>
             {notice && <p className="booking-notice" role="status">{notice}</p>}
             <p className="booking-form-note">Your WhatsApp message will be prepared with these details. Your trip is not confirmed until our team replies.</p>
           </form>
