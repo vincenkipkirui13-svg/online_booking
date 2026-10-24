@@ -85,7 +85,7 @@ export default function BookingPage() {
             <div className="booking-route-fields">
               <label className="booking-field"><span>FROM</span><input type="text" list="kenya-town-suggestions" autoComplete="off" maxLength={80} placeholder="Enter departure town" value={from} onChange={(e) => setFrom(e.target.value)} required /></label>
               <button className="booking-swap" type="button" onClick={swapRoute} aria-label="Swap departure and destination">⇄</button>
-              <label className="booking-field"><span>TO</span><select value={to} onChange={(e) => setTo(e.target.value)} required>{towns.map((town) => <option key={town} value={town}>{town}</option>)}</select></label>
+              <label className="booking-field"><span>TO</span><input type="text" list="kenya-town-suggestions" autoComplete="off" maxLength={80} placeholder="Enter destination town" value={to} onChange={(e) => setTo(e.target.value)} required /></label>
               <label className="booking-field"><span>TRAVEL DATE</span><input type="date" min={today} value={date} onChange={(e) => setDate(e.target.value)} required /></label>
               <datalist id="kenya-town-suggestions">{towns.map((town) => <option key={town} value={town} />)}</datalist>
               <label className="booking-field"><span>PASSENGERS</span><select value={passengers} onChange={(e) => { setPassengers(e.target.value); setNotice(""); }}>{[1, 2, 3, 4, 5, 6].map((n) => <option key={n} value={n}>{n} {n === 1 ? "Passenger" : "Passengers"}</option>)}</select></label>
