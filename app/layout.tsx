@@ -12,7 +12,6 @@ export const metadata: Metadata = {
   description:
     "Request shuttle journeys across Kenya with Prestige Shuttle. Enter your departure town, destination and travel date, then confirm route availability and fare with our team.",
   applicationName: "Prestige Shuttle",
-  alternates: { canonical: "/" },
   openGraph: {
     type: "website",
     locale: "en_KE",
