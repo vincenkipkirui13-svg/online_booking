@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 const siteUrl = "https://www.prestigeshuttle.online";
 
 export const metadata: Metadata = {
-  title: "Shuttle Routes Across Kenya | Prestige Shuttle",
+  title: "Shuttle Routes Across Kenya",
   description:
     "Explore advertised Prestige Shuttle journeys across Kenya, then send a booking request to confirm route availability, departure time and fare.",
   alternates: { canonical: `${siteUrl}/routes` },
